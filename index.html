@@ -3,17 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>医学刷题</title>
 
 <style>
+
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  background: #f4f7fb;
   font-family: Arial, "Microsoft YaHei", sans-serif;
-  background: #f5f7fa;
   color: #222;
 }
 
@@ -23,19 +25,80 @@ body {
   padding: 22px;
 }
 
-.header {
+.logo {
   text-align: center;
-  margin: 30px 0;
+  margin-top: 28px;
+  margin-bottom: 25px;
 }
 
-.header h1 {
+.logo h1 {
+  margin: 0;
   color: #145b87;
-  font-size: 32px;
-  margin-bottom: 10px;
+  font-size: 34px;
 }
 
-.chapter {
+.logo p {
+  color: #888;
+  margin-top: 10px;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+}
+
+.title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.menu-button {
+  width: 100%;
+  padding: 18px;
+  margin: 10px 0;
+  background: white;
+  border: 1px solid #d9dfe8;
+  border-radius: 14px;
+  font-size: 18px;
+  text-align: left;
+}
+
+.menu-button:active {
+  background: #eef5fb;
+}
+
+.primary {
+  background: #1769aa;
+  color: white;
+  border: none;
+}
+
+.secondary {
+  background: #eef5fb;
+  color: #145b87;
+}
+
+.back {
+  border: none;
+  background: none;
+  color: #1769aa;
+  font-size: 17px;
+  padding: 5px 0;
+  margin-bottom: 15px;
+}
+
+.question-header {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.category {
   color: #777;
+  font-size: 17px;
   margin-bottom: 8px;
 }
 
@@ -44,27 +107,20 @@ body {
   font-size: 17px;
 }
 
-.card {
-  background: white;
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-}
-
 .question {
   font-size: 21px;
   line-height: 1.7;
-  margin-bottom: 25px;
+  margin-bottom: 24px;
 }
 
 .option {
-  display: block;
   width: 100%;
+  display: block;
+  padding: 17px;
+  margin: 12px 0;
   background: white;
   border: 1px solid #ddd;
   border-radius: 13px;
-  padding: 17px;
-  margin: 12px 0;
   text-align: left;
   font-size: 18px;
   line-height: 1.5;
@@ -82,10 +138,10 @@ body {
 
 .result {
   display: none;
-  margin-top: 25px;
-  padding: 18px;
   background: #f7f9fc;
   border-radius: 12px;
+  padding: 18px;
+  margin-top: 22px;
   line-height: 1.7;
   font-size: 17px;
 }
@@ -93,35 +149,37 @@ body {
 .next {
   display: none;
   width: 100%;
-  margin-top: 20px;
   padding: 16px;
-  border: none;
-  border-radius: 12px;
+  margin-top: 18px;
   background: #1769aa;
   color: white;
+  border: none;
+  border-radius: 12px;
   font-size: 18px;
 }
 
 .stats {
   text-align: center;
-  margin-top: 20px;
   color: #666;
   line-height: 1.8;
+  margin-top: 20px;
 }
 
 .finish {
   text-align: center;
-  padding: 30px 10px;
+  line-height: 2;
 }
 
-.restart {
-  padding: 14px 25px;
-  border: none;
-  border-radius: 10px;
-  background: #1769aa;
-  color: white;
-  font-size: 17px;
+.hidden {
+  display: none;
 }
+
+.count {
+  float: right;
+  color: #888;
+  font-size: 15px;
+}
+
 </style>
 </head>
 
@@ -129,198 +187,917 @@ body {
 
 <div class="app">
 
-  <div class="header">
+  <div class="logo">
     <h1>📚 医学刷题</h1>
-    <div class="chapter" id="chapter"></div>
-    <div class="progress" id="progress"></div>
+    <p>医学知识学习与练习</p>
   </div>
 
-  <div class="card" id="card">
 
-    <div class="question" id="question"></div>
+  <!-- 首页 -->
+  <div id="homePage">
 
-    <div id="options"></div>
+    <div class="card">
 
-    <div class="result" id="result"></div>
+      <div class="title">
+        开始刷题
+      </div>
 
-    <button class="next" id="next" onclick="nextQuestion()">
-      下一题 →
+      <button class="menu-button primary"
+        onclick="showSubjects()">
+        📖 按章节刷题
+      </button>
+
+      <button class="menu-button secondary"
+        onclick="startAllRandom()">
+        🎲 全部题目随机刷题
+      </button>
+
+    </div>
+
+    <div class="card">
+
+      <div class="title">
+        题库信息
+      </div>
+
+      <div id="libraryInfo"></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- 科目选择 -->
+  <div id="subjectPage" class="hidden">
+
+    <button class="back" onclick="goHome()">
+      ← 返回首页
     </button>
 
+    <div class="card">
+
+      <div class="title">
+        选择科目
+      </div>
+
+      <div id="subjectList"></div>
+
+    </div>
+
   </div>
 
-  <div class="stats" id="stats"></div>
+
+  <!-- 章节选择 -->
+  <div id="chapterPage" class="hidden">
+
+    <button class="back" onclick="showSubjects()">
+      ← 返回科目
+    </button>
+
+    <div class="card">
+
+      <div class="title" id="chapterTitle">
+        选择章节
+      </div>
+
+      <div id="chapterList"></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- 模式选择 -->
+  <div id="modePage" class="hidden">
+
+    <button class="back" onclick="backToChapters()">
+      ← 返回章节
+    </button>
+
+    <div class="card">
+
+      <div class="title" id="modeTitle">
+        选择刷题模式
+      </div>
+
+      <button class="menu-button primary"
+        onclick="startSequential()">
+        📘 顺序刷题
+      </button>
+
+      <button class="menu-button secondary"
+        onclick="startRandom()">
+        🎲 随机刷题
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- 刷题页面 -->
+  <div id="quizPage" class="hidden">
+
+    <button class="back" onclick="quitQuiz()">
+      ← 退出刷题
+    </button>
+
+    <div class="question-header">
+
+      <div class="category" id="category"></div>
+
+      <div class="progress" id="progress"></div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="question" id="question"></div>
+
+      <div id="options"></div>
+
+      <div class="result" id="result"></div>
+
+      <button class="next"
+        id="next"
+        onclick="nextQuestion()">
+
+        下一题 →
+
+      </button>
+
+    </div>
+
+
+    <div class="stats" id="stats"></div>
+
+  </div>
+
+
+  <!-- 完成页面 -->
+  <div id="finishPage" class="hidden">
+
+    <div class="card finish">
+
+      <h2>🎉 本组刷题完成</h2>
+
+      <div id="finishStats"></div>
+
+      <button class="menu-button primary"
+        onclick="goHome()">
+
+        返回首页
+
+      </button>
+
+    </div>
+
+  </div>
 
 </div>
 
-<!-- 读取独立题库 -->
+
+<!-- 独立题库 -->
 <script src="questions.js"></script>
+
 
 <script>
 
+let selectedSubject = "";
+let selectedChapter = "";
+
+let quizQuestions = [];
+
 let current = 0;
+
 let correctCount = 0;
 let wrongCount = 0;
 
-function loadQuestion() {
+let randomMode = false;
 
-  const q = questions[current];
 
-  document.getElementById("chapter").innerText =
-    q.subject + " · " + q.chapter;
 
-  document.getElementById("progress").innerText =
-    "第 " + (current + 1) + " / " + questions.length + " 题";
+/* =========================
+   页面工具
+========================= */
 
-  document.getElementById("question").innerText =
-    (current + 1) + ". " + q.question;
+function hideAllPages() {
 
-  const optionsDiv = document.getElementById("options");
+  document.getElementById("homePage").classList.add("hidden");
 
-  optionsDiv.innerHTML = "";
+  document.getElementById("subjectPage").classList.add("hidden");
 
-  q.options.forEach((option, index) => {
+  document.getElementById("chapterPage").classList.add("hidden");
 
-    const button = document.createElement("button");
+  document.getElementById("modePage").classList.add("hidden");
 
-    button.className = "option";
+  document.getElementById("quizPage").classList.add("hidden");
 
-    button.innerText =
-      String.fromCharCode(65 + index) + ". " + option;
+  document.getElementById("finishPage").classList.add("hidden");
 
-    button.onclick = function() {
-      checkAnswer(index, button);
-    };
-
-    optionsDiv.appendChild(button);
-
-  });
-
-  document.getElementById("result").style.display = "none";
-  document.getElementById("next").style.display = "none";
-
-  updateStats();
 }
 
 
-function checkAnswer(index, selectedButton) {
 
-  const q = questions[current];
+function goHome() {
 
-  const buttons = document.querySelectorAll(".option");
+  hideAllPages();
 
-  buttons.forEach(function(button) {
-    button.disabled = true;
+  document.getElementById("homePage").classList.remove("hidden");
+
+  updateLibraryInfo();
+
+  window.scrollTo(0,0);
+
+}
+
+
+
+/* =========================
+   题库信息
+========================= */
+
+function updateLibraryInfo() {
+
+  const subjects =
+    [...new Set(
+      questions.map(q => q.subject)
+    )];
+
+  const chapters =
+    [...new Set(
+      questions.map(q => q.chapter)
+    )];
+
+  document.getElementById("libraryInfo").innerHTML =
+
+    "📚 题目总数：<strong>" +
+    questions.length +
+    "</strong> 道<br><br>" +
+
+    "📂 科目数量：<strong>" +
+    subjects.length +
+    "</strong><br><br>" +
+
+    "📖 章节数量：<strong>" +
+    chapters.length +
+    "</strong>";
+
+}
+
+
+
+/* =========================
+   科目
+========================= */
+
+function showSubjects() {
+
+  hideAllPages();
+
+  document.getElementById("subjectPage")
+    .classList.remove("hidden");
+
+  const subjects =
+    [...new Set(
+      questions.map(q => q.subject)
+    )];
+
+  const list =
+    document.getElementById("subjectList");
+
+  list.innerHTML = "";
+
+  subjects.forEach(subject => {
+
+    const count =
+      questions.filter(
+        q => q.subject === subject
+      ).length;
+
+    const button =
+      document.createElement("button");
+
+    button.className = "menu-button";
+
+    button.innerHTML =
+      "📘 " +
+      subject +
+      '<span class="count">' +
+      count +
+      "题</span>";
+
+    button.onclick =
+      function() {
+
+        selectSubject(subject);
+
+      };
+
+    list.appendChild(button);
+
   });
 
-  const correct = index === q.answer;
+  window.scrollTo(0,0);
+
+}
+
+
+
+function selectSubject(subject) {
+
+  selectedSubject = subject;
+
+  showChapters();
+
+}
+
+
+
+/* =========================
+   章节
+========================= */
+
+function showChapters() {
+
+  hideAllPages();
+
+  document.getElementById("chapterPage")
+    .classList.remove("hidden");
+
+  document.getElementById("chapterTitle")
+    .innerText =
+    selectedSubject + " · 选择章节";
+
+  const subjectQuestions =
+    questions.filter(
+      q => q.subject === selectedSubject
+    );
+
+  const chapters =
+    [...new Set(
+      subjectQuestions.map(q => q.chapter)
+    )];
+
+  const list =
+    document.getElementById("chapterList");
+
+  list.innerHTML = "";
+
+
+  /* 全部章节 */
+
+  const allButton =
+    document.createElement("button");
+
+  allButton.className =
+    "menu-button primary";
+
+  allButton.innerHTML =
+    "📚 全部章节" +
+    '<span class="count">' +
+    subjectQuestions.length +
+    "题</span>";
+
+  allButton.onclick =
+    function() {
+
+      selectChapter("__ALL__");
+
+    };
+
+  list.appendChild(allButton);
+
+
+  /* 单独章节 */
+
+  chapters.forEach(chapter => {
+
+    const count =
+      subjectQuestions.filter(
+        q => q.chapter === chapter
+      ).length;
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "menu-button";
+
+    button.innerHTML =
+      "📖 " +
+      chapter +
+      '<span class="count">' +
+      count +
+      "题</span>";
+
+    button.onclick =
+      function() {
+
+        selectChapter(chapter);
+
+      };
+
+    list.appendChild(button);
+
+  });
+
+  window.scrollTo(0,0);
+
+}
+
+
+
+function selectChapter(chapter) {
+
+  selectedChapter = chapter;
+
+  showModePage();
+
+}
+
+
+
+function backToChapters() {
+
+  showChapters();
+
+}
+
+
+
+/* =========================
+   模式
+========================= */
+
+function showModePage() {
+
+  hideAllPages();
+
+  document.getElementById("modePage")
+    .classList.remove("hidden");
+
+  let chapterText =
+    selectedChapter === "__ALL__"
+    ? "全部章节"
+    : selectedChapter;
+
+  document.getElementById("modeTitle")
+    .innerText =
+    selectedSubject +
+    " · " +
+    chapterText;
+
+  window.scrollTo(0,0);
+
+}
+
+
+
+function prepareSelectedQuestions() {
+
+  if (selectedChapter === "__ALL__") {
+
+    return questions.filter(
+      q => q.subject === selectedSubject
+    );
+
+  }
+
+  return questions.filter(
+    q =>
+      q.subject === selectedSubject &&
+      q.chapter === selectedChapter
+  );
+
+}
+
+
+
+/* =========================
+   开始刷题
+========================= */
+
+function startSequential() {
+
+  randomMode = false;
+
+  quizQuestions =
+    prepareSelectedQuestions();
+
+  beginQuiz();
+
+}
+
+
+
+function startRandom() {
+
+  randomMode = true;
+
+  quizQuestions =
+    prepareSelectedQuestions();
+
+  shuffleArray(quizQuestions);
+
+  beginQuiz();
+
+}
+
+
+
+function startAllRandom() {
+
+  selectedSubject = "全部科目";
+
+  selectedChapter = "全部章节";
+
+  randomMode = true;
+
+  quizQuestions =
+    questions.slice();
+
+  shuffleArray(quizQuestions);
+
+  beginQuiz();
+
+}
+
+
+
+function shuffleArray(array) {
+
+  for (
+    let i = array.length - 1;
+    i > 0;
+    i--
+  ) {
+
+    const j =
+      Math.floor(
+        Math.random() * (i + 1)
+      );
+
+    [
+      array[i],
+      array[j]
+    ] =
+    [
+      array[j],
+      array[i]
+    ];
+
+  }
+
+}
+
+
+
+/* =========================
+   刷题
+========================= */
+
+function beginQuiz() {
+
+  current = 0;
+
+  correctCount = 0;
+
+  wrongCount = 0;
+
+  hideAllPages();
+
+  document.getElementById("quizPage")
+    .classList.remove("hidden");
+
+  loadQuestion();
+
+}
+
+
+
+function loadQuestion() {
+
+  const q =
+    quizQuestions[current];
+
+  document.getElementById("category")
+    .innerText =
+    q.subject +
+    " · " +
+    q.chapter;
+
+  document.getElementById("progress")
+    .innerText =
+    "第 " +
+    (current + 1) +
+    " / " +
+    quizQuestions.length +
+    " 题";
+
+  document.getElementById("question")
+    .innerText =
+    (current + 1) +
+    ". " +
+    q.question;
+
+
+  const optionsDiv =
+    document.getElementById("options");
+
+  optionsDiv.innerHTML = "";
+
+
+  q.options.forEach(
+    (option,index) => {
+
+      const button =
+        document.createElement("button");
+
+      button.className =
+        "option";
+
+      button.innerText =
+        String.fromCharCode(
+          65 + index
+        ) +
+        ". " +
+        option;
+
+      button.onclick =
+        function() {
+
+          checkAnswer(
+            index,
+            button
+          );
+
+        };
+
+      optionsDiv.appendChild(
+        button
+      );
+
+    }
+  );
+
+
+  document.getElementById("result")
+    .style.display = "none";
+
+  document.getElementById("next")
+    .style.display = "none";
+
+  updateStats();
+
+  window.scrollTo(0,0);
+
+}
+
+
+
+/* =========================
+   判题
+========================= */
+
+function checkAnswer(
+  index,
+  selectedButton
+) {
+
+  const q =
+    quizQuestions[current];
+
+  const buttons =
+    document.querySelectorAll(
+      ".option"
+    );
+
+  buttons.forEach(
+    button =>
+      button.disabled = true
+  );
+
+
+  const correct =
+    index === q.answer;
+
 
   if (correct) {
 
-    selectedButton.classList.add("correct");
+    selectedButton
+      .classList
+      .add("correct");
 
     correctCount++;
 
   } else {
 
-    selectedButton.classList.add("wrong");
+    selectedButton
+      .classList
+      .add("wrong");
 
-    buttons[q.answer].classList.add("correct");
+    buttons[q.answer]
+      .classList
+      .add("correct");
 
     wrongCount++;
 
   }
 
-  const result = document.getElementById("result");
 
-  result.style.display = "block";
+  const result =
+    document.getElementById(
+      "result"
+    );
+
+  result.style.display =
+    "block";
+
 
   result.innerHTML =
+
     "<strong>" +
-    (correct ? "✅ 回答正确" : "❌ 回答错误") +
+
+    (
+      correct
+      ? "✅ 回答正确"
+      : "❌ 回答错误"
+    ) +
+
     "</strong><br><br>" +
 
     "<strong>正确答案：</strong>" +
-    String.fromCharCode(65 + q.answer) +
 
-    "<br><br><strong>解析：</strong><br>" +
+    String.fromCharCode(
+      65 + q.answer
+    ) +
+
+    "<br><br>" +
+
+    "<strong>解析：</strong><br>" +
+
     q.explanation;
 
-  document.getElementById("next").style.display = "block";
+
+  document.getElementById("next")
+    .style.display = "block";
 
   updateStats();
+
 }
 
+
+
+/* =========================
+   下一题
+========================= */
 
 function nextQuestion() {
 
   current++;
 
-  if (current >= questions.length) {
+  if (
+    current >=
+    quizQuestions.length
+  ) {
 
     showFinish();
 
     return;
+
   }
 
   loadQuestion();
+
 }
 
+
+
+/* =========================
+   统计
+========================= */
 
 function updateStats() {
 
-  const answered = correctCount + wrongCount;
+  const answered =
+    correctCount +
+    wrongCount;
 
   let accuracy = 0;
 
   if (answered > 0) {
-    accuracy = Math.round(correctCount / answered * 100);
+
+    accuracy =
+      Math.round(
+        correctCount /
+        answered *
+        100
+      );
+
   }
 
-  document.getElementById("stats").innerHTML =
-    "已做：" + answered +
-    "　✅ 正确：" + correctCount +
-    "　❌ 错误：" + wrongCount +
-    "<br>正确率：" + accuracy + "%";
+  document.getElementById("stats")
+    .innerHTML =
+
+    "已做：" +
+    answered +
+
+    "　✅ 正确：" +
+    correctCount +
+
+    "　❌ 错误：" +
+    wrongCount +
+
+    "<br>" +
+
+    "正确率：" +
+    accuracy +
+    "%";
+
 }
 
+
+
+/* =========================
+   完成
+========================= */
 
 function showFinish() {
 
-  const answered = correctCount + wrongCount;
+  hideAllPages();
+
+  document.getElementById("finishPage")
+    .classList.remove("hidden");
+
+  const answered =
+    correctCount +
+    wrongCount;
 
   let accuracy = 0;
 
   if (answered > 0) {
-    accuracy = Math.round(correctCount / answered * 100);
+
+    accuracy =
+      Math.round(
+        correctCount /
+        answered *
+        100
+      );
+
   }
 
-  document.getElementById("chapter").innerText = "";
 
-  document.getElementById("progress").innerText =
-    "本组刷题完成";
+  document.getElementById("finishStats")
+    .innerHTML =
 
-  document.getElementById("card").innerHTML =
-    '<div class="finish">' +
+    "<p>共完成：" +
+    answered +
+    " 道题</p>" +
 
-    '<h2>🎉 刷题完成</h2>' +
+    "<p>✅ 正确：" +
+    correctCount +
+    "</p>" +
 
-    '<p>共完成 ' + answered + ' 道题</p>' +
+    "<p>❌ 错误：" +
+    wrongCount +
+    "</p>" +
 
-    '<p>✅ 正确：' + correctCount + '</p>' +
+    "<p><strong>正确率：" +
+    accuracy +
+    "%</strong></p>";
 
-    '<p>❌ 错误：' + wrongCount + '</p>' +
+  window.scrollTo(0,0);
 
-    '<p><strong>正确率：' + accuracy + '%</strong></p>' +
-
-    '<button class="restart" onclick="location.reload()">' +
-    '重新刷题' +
-    '</button>' +
-
-    '</div>';
 }
 
-loadQuestion();
+
+
+function quitQuiz() {
+
+  const sure =
+    confirm(
+      "确定退出本次刷题吗？"
+    );
+
+  if (sure) {
+
+    goHome();
+
+  }
+
+}
+
+
+
+/* =========================
+   启动
+========================= */
+
+updateLibraryInfo();
+
+goHome();
 
 </script>
 
