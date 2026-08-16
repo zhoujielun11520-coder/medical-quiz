@@ -1,166 +1,173 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>医学刷题</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>医学刷题</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fa;
-      margin: 0;
-      padding: 20px;
-    }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    .app {
-      max-width: 600px;
-      margin: auto;
-    }
+body {
+  margin: 0;
+  font-family: Arial, "Microsoft YaHei", sans-serif;
+  background: #f5f7fa;
+  color: #222;
+}
 
-    h1 {
-      text-align: center;
-      color: #1f4e79;
-    }
+.app {
+  max-width: 650px;
+  margin: auto;
+  padding: 22px;
+}
 
-    .progress {
-      text-align: center;
-      color: #666;
-      margin-bottom: 20px;
-    }
+.header {
+  text-align: center;
+  margin: 30px 0;
+}
 
-    .card {
-      background: white;
-      padding: 22px;
-      border-radius: 16px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-    }
+.header h1 {
+  color: #145b87;
+  font-size: 32px;
+  margin-bottom: 10px;
+}
 
-    .question {
-      font-size: 20px;
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
+.chapter {
+  color: #777;
+  margin-bottom: 8px;
+}
 
-    .option {
-      display: block;
-      width: 100%;
-      padding: 15px;
-      margin: 10px 0;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      background: white;
-      text-align: left;
-      font-size: 17px;
-    }
+.progress {
+  color: #666;
+  font-size: 17px;
+}
 
-    .option:active {
-      background: #eef5ff;
-    }
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+}
 
-    .correct {
-      background: #dff5e3 !important;
-      border-color: #4caf50;
-    }
+.question {
+  font-size: 21px;
+  line-height: 1.7;
+  margin-bottom: 25px;
+}
 
-    .wrong {
-      background: #ffe3e3 !important;
-      border-color: #e53935;
-    }
+.option {
+  display: block;
+  width: 100%;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 13px;
+  padding: 17px;
+  margin: 12px 0;
+  text-align: left;
+  font-size: 18px;
+  line-height: 1.5;
+}
 
-    #result {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 10px;
-      display: none;
-      line-height: 1.6;
-    }
+.correct {
+  background: #dff6e5 !important;
+  border: 2px solid #34b65a !important;
+}
 
-    #next {
-      width: 100%;
-      margin-top: 20px;
-      padding: 15px;
-      border: none;
-      border-radius: 10px;
-      background: #1f6feb;
-      color: white;
-      font-size: 17px;
-      display: none;
-    }
-  </style>
+.wrong {
+  background: #ffe3e3 !important;
+  border: 2px solid #e34b4b !important;
+}
+
+.result {
+  display: none;
+  margin-top: 25px;
+  padding: 18px;
+  background: #f7f9fc;
+  border-radius: 12px;
+  line-height: 1.7;
+  font-size: 17px;
+}
+
+.next {
+  display: none;
+  width: 100%;
+  margin-top: 20px;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  background: #1769aa;
+  color: white;
+  font-size: 18px;
+}
+
+.stats {
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+  line-height: 1.8;
+}
+
+.finish {
+  text-align: center;
+  padding: 30px 10px;
+}
+
+.restart {
+  padding: 14px 25px;
+  border: none;
+  border-radius: 10px;
+  background: #1769aa;
+  color: white;
+  font-size: 17px;
+}
+</style>
 </head>
 
 <body>
 
 <div class="app">
 
-  <h1>📚 医学刷题</h1>
+  <div class="header">
+    <h1>📚 医学刷题</h1>
+    <div class="chapter" id="chapter"></div>
+    <div class="progress" id="progress"></div>
+  </div>
 
-  <div class="progress" id="progress"></div>
-
-  <div class="card">
+  <div class="card" id="card">
 
     <div class="question" id="question"></div>
 
     <div id="options"></div>
 
-    <div id="result"></div>
+    <div class="result" id="result"></div>
 
-    <button id="next" onclick="nextQuestion()">
+    <button class="next" id="next" onclick="nextQuestion()">
       下一题 →
     </button>
 
   </div>
 
+  <div class="stats" id="stats"></div>
+
 </div>
+
+<!-- 读取独立题库 -->
+<script src="questions.js"></script>
 
 <script>
 
-const questions = [
-
-  {
-    question: "HER2阳性乳腺癌新辅助治疗后的病理完全缓解通常缩写为什么？",
-    options: [
-      "pCR",
-      "DFS",
-      "OS",
-      "ORR"
-    ],
-    answer: 0,
-    explanation: "pCR是pathological complete response，即病理完全缓解。"
-  },
-
-  {
-    question: "TNBC是下列哪种乳腺癌的英文缩写？",
-    options: [
-      "三阴性乳腺癌",
-      "HER2阳性乳腺癌",
-      "Luminal A型乳腺癌",
-      "导管原位癌"
-    ],
-    answer: 0,
-    explanation: "TNBC是triple-negative breast cancer，即三阴性乳腺癌。"
-  },
-
-  {
-    question: "乳腺癌中HER2的中文名称通常是？",
-    options: [
-      "雌激素受体",
-      "孕激素受体",
-      "人表皮生长因子受体2",
-      "血管内皮生长因子"
-    ],
-    answer: 2,
-    explanation: "HER2即human epidermal growth factor receptor 2，人表皮生长因子受体2。"
-  }
-
-];
-
 let current = 0;
+let correctCount = 0;
+let wrongCount = 0;
 
 function loadQuestion() {
 
   const q = questions[current];
+
+  document.getElementById("chapter").innerText =
+    q.subject + " · " + q.chapter;
 
   document.getElementById("progress").innerText =
     "第 " + (current + 1) + " / " + questions.length + " 题";
@@ -181,7 +188,9 @@ function loadQuestion() {
     button.innerText =
       String.fromCharCode(65 + index) + ". " + option;
 
-    button.onclick = () => checkAnswer(index, button);
+    button.onclick = function() {
+      checkAnswer(index, button);
+    };
 
     optionsDiv.appendChild(button);
 
@@ -189,25 +198,36 @@ function loadQuestion() {
 
   document.getElementById("result").style.display = "none";
   document.getElementById("next").style.display = "none";
+
+  updateStats();
 }
 
-function checkAnswer(index, button) {
+
+function checkAnswer(index, selectedButton) {
 
   const q = questions[current];
 
   const buttons = document.querySelectorAll(".option");
 
-  buttons.forEach(btn => btn.disabled = true);
+  buttons.forEach(function(button) {
+    button.disabled = true;
+  });
 
-  if(index === q.answer) {
+  const correct = index === q.answer;
 
-    button.classList.add("correct");
+  if (correct) {
+
+    selectedButton.classList.add("correct");
+
+    correctCount++;
 
   } else {
 
-    button.classList.add("wrong");
+    selectedButton.classList.add("wrong");
 
     buttons[q.answer].classList.add("correct");
+
+    wrongCount++;
 
   }
 
@@ -217,30 +237,87 @@ function checkAnswer(index, button) {
 
   result.innerHTML =
     "<strong>" +
-    (index === q.answer ? "✅ 回答正确" : "❌ 回答错误") +
+    (correct ? "✅ 回答正确" : "❌ 回答错误") +
     "</strong><br><br>" +
+
     "<strong>正确答案：</strong>" +
     String.fromCharCode(65 + q.answer) +
-    "<br><br>" +
-    "<strong>解析：</strong>" +
+
+    "<br><br><strong>解析：</strong><br>" +
     q.explanation;
 
   document.getElementById("next").style.display = "block";
+
+  updateStats();
 }
+
 
 function nextQuestion() {
 
   current++;
 
-  if(current >= questions.length) {
+  if (current >= questions.length) {
 
-    alert("🎉 本组题目已经完成！");
+    showFinish();
 
-    current = 0;
-
+    return;
   }
 
   loadQuestion();
+}
+
+
+function updateStats() {
+
+  const answered = correctCount + wrongCount;
+
+  let accuracy = 0;
+
+  if (answered > 0) {
+    accuracy = Math.round(correctCount / answered * 100);
+  }
+
+  document.getElementById("stats").innerHTML =
+    "已做：" + answered +
+    "　✅ 正确：" + correctCount +
+    "　❌ 错误：" + wrongCount +
+    "<br>正确率：" + accuracy + "%";
+}
+
+
+function showFinish() {
+
+  const answered = correctCount + wrongCount;
+
+  let accuracy = 0;
+
+  if (answered > 0) {
+    accuracy = Math.round(correctCount / answered * 100);
+  }
+
+  document.getElementById("chapter").innerText = "";
+
+  document.getElementById("progress").innerText =
+    "本组刷题完成";
+
+  document.getElementById("card").innerHTML =
+    '<div class="finish">' +
+
+    '<h2>🎉 刷题完成</h2>' +
+
+    '<p>共完成 ' + answered + ' 道题</p>' +
+
+    '<p>✅ 正确：' + correctCount + '</p>' +
+
+    '<p>❌ 错误：' + wrongCount + '</p>' +
+
+    '<p><strong>正确率：' + accuracy + '%</strong></p>' +
+
+    '<button class="restart" onclick="location.reload()">' +
+    '重新刷题' +
+    '</button>' +
+
+    '</div>';
 }
 
 loadQuestion();
